@@ -1,0 +1,132 @@
+<include file="./Tpl/Public/headstart.html" />
+<title>头脑风暴鸡</title>
+<link rel="stylesheet" href="__PUBLIC__/css/common.css" />
+<link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
+<style>
+	header, #wrapper {
+		margin: 0 auto;
+		width: 800px;
+	}
+	
+	.main div {
+		margin-bottom: 5px;
+	}
+	
+
+</style>
+<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src="__PUBLIC__/javascript/jqTools.js"></script>
+<script src="__PUBLIC__/javascript/InputValidate.js"></script>
+<script>
+	var msg;
+	
+	$(function(){
+		msg = $('#topSlideMsg');
+	
+		$('#email').focus();
+		$('#email').blur(function(){
+			if (validateEmail(this, msg[0], '请输入有效的邮箱', '')) {
+				var inputEmail = this.value;				
+				$.post(
+					"__URL__/checkEmail",
+					{email: inputEmail},
+					checkEmailResponse,
+					"json"
+				);
+			} else {
+				$('.register').hide();
+				$('#login').val('登录/注册').attr("disabled", "disabled");
+				slideBox(msg, 2000, 'red');
+			}
+		});
+		
+		$('#login').click(function(){
+			refreshVerify();
+			
+			if (!validateEmail($('#email')[0], msg[0], '请输入有效的邮箱', '')){
+				slideBox(msg, 2000, 'red');
+				return false;
+			}		
+
+			var action = $('#login').val();			
+			var mail = $('#email').val();
+			if (action === '注册') {
+				if (!validateLength(6, 12, $('#password')[0], msg[0], '密码有效长度为6~12位', '')
+					|| !validateNonEmpty($('#name')[0], msg[0], '昵称不能为空', '')
+					|| !validateNonEmpty($('#verify')[0], msg[0], '验证码不能为空', '')){
+					
+					slideBox(msg, 2000, 'red');
+					return false;
+				}	
+				
+				var pwd = $('#password').val();
+				var userName = $('#name').val();
+				$.post(
+					"__URL__/addUser",
+					{
+						email: mail,
+						password: pwd,
+						name: userName						
+					},
+					showResponse,
+					"json"
+				);
+			} else if (action === '登录') {
+			
+			}
+		});
+	});
+	
+	function showResponse(data) {
+		if (data.status === 0) {
+			slideBox(msg.text(data.info), 2000, 'red');
+		}
+	}
+	
+	function checkEmailResponse(data) {	
+		if (data.status === 0) {
+			$('.register').show();
+			$('#login').val('注册');
+		} else {
+			$('#login').val('登录');
+		}
+		$('#login').removeAttr("disabled");
+	}
+	
+	function refreshVerify() {
+		var timenow = new Date().getTime();
+		document.getElementById("verifyImg").src="__URL__/showVerifyImage/" + timenow;
+	}
+</script>
+</head>
+<body>
+	<header>
+	</header>
+	<div id="wrapper">
+		<div id="topSlideMsg"></div>
+		<div class="panel_wrapper">
+			<div class="main">
+				<div>
+					邮箱 <input id="email" class="text" type="text" tabindex="1">
+				</div>
+				<div>
+					密码 <input id="password" class="text" type="password" tabindex="2"> 
+				</div>
+				<div class="hide register">
+					昵称 <input id="name" class="text" type="text" tabindex="3">
+				</div>
+				<div class="hide register">
+					验证 <input id="verify" class="text" type="text" tabindex="4">&nbsp;<img id="verifyImg" src="__URL__/showVerifyImage/" alt="Verify Image" >
+				</div>
+			</div>
+			<div class="ctrl">
+				<span>
+					<input id="login" type="button" value="登录/注册" tabindex="5" class="btn" disabled="disabled">
+				</span>
+				<span>
+					<input type="button" value="找回密码" tabindex="6" class="btn hide">
+				</span>
+			</div>
+		</div>
+	</div>
+<include file="./Tpl/Public/footer_bodyend.html" />

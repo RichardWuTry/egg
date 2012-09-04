@@ -1,0 +1,136 @@
+<include file="./Tpl/Public/headstart.html" />
+<title>头脑风暴鸡</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.21/themes/redmond/jquery-ui.css" />
+<link rel="stylesheet" href="__PUBLIC__/css/common.css" />
+<link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
+<link rel="stylesheet" href="__PUBLIC__/css/head_panel.TopRightBtn.css" />
+<style>
+	header, #wrapper {
+		margin: 0 auto;
+
+	}
+	
+	header {
+		padding-bottom: 40px;
+		width: 960px;
+	}
+	
+	#wrapper {
+		clear: both;	
+		width: 640px;
+	}
+	
+	.line {
+		margin-bottom: 10px;
+	}
+</style>
+<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+<script src="__PUBLIC__/javascript/jquery.ui.datepicker-zh-CN.js"></script>
+
+<script src="__PUBLIC__/javascript/InputValidate.js"></script>
+<script src="__PUBLIC__/javascript/jqTools.js"></script>
+<script>
+	var msg;
+	
+	$(function(){
+		msg = $('#topSlideMsg');
+		
+		$('.datepicker').datepicker({ minDate: 0});
+		
+		$('#create_storm_form').submit(function(){
+			if (validateForm()){
+				var closeDatetime = $('#close_date').val() + ' ' + fillZero($('#close_hour').val()) + ':00:00';
+				$('#close_datetime').val(closeDatetime);
+				return true;
+			} else {
+				slideBox(msg, 2000, 'red');
+				return false;
+			}
+		});
+	});
+	
+	function isHourValid(inputHour) {
+		var isValid = true;
+			
+		if (isNaN(inputHour)) {
+			isValid = false;
+		}
+		
+		if (isValid) {
+			var hour = parseInt(inputHour);
+			var fHour = parseFloat(inputHour);
+			if (hour < 0 || hour > 23 || hour !== fHour) {
+				isValid = false;
+			}
+		}
+		
+		return isValid;
+	}	
+
+	function validateForm() {
+		var isValid = true;
+		
+		isValid = validateNonEmpty($('#storm_name')[0], msg[0], '风暴主题 不能为空', '');
+		
+		if (isValid) {
+			isValid = validateNonEmpty($('#close_date')[0], msg[0], '截止日期 不能为空', '');
+		}
+		
+		if (isValid) {
+			isValid = isHourValid($('#close_hour').val());
+			msg.text('小时 有效值为0~23的整数');
+		}
+		
+		return isValid;
+	}
+</script>
+<include file="./Tpl/Public/headend_bodystart_banner.html" />
+<div id="wrapper">
+	<div id="topSlideMsg"></div>
+	<div class="panel_wrapper">
+		<form method="post" action="__URL__/add" id="create_storm_form">
+			<h1>启动风暴</h1>
+			<div class="panelbody">
+				<div class="main">
+					<div class="line">
+						<strong>风暴主题</strong>
+					</div>
+					<div class="line">
+						<input id="storm_name" style="width:600px;" class="text" type="text" tabindex="1" name="name">
+					</div>
+					<div class="line">
+						<strong style="vertical-align:top;">补充说明</strong>
+					</div>
+					<div class="line">
+						<textarea id="storm_desc" style="width:600px; height:100px;" class="text" tabindex="2" name="desc"></textarea>
+					</div>
+					<div class="line" style="margin-top:20px;">
+						<strong>"一家之言"结束时间</strong>
+						<span>（参与者独立给出方案的截止时间，未及时提交将无法参与下一阶段）</span>
+					</div>
+					<div class="line">
+						<input id="close_date" class="datepicker text" style="width:80px;" type="text" tabindex="3">日
+						<input type="text" class="text" style="width:20px;" id="close_hour" maxlength="2" value="18" tabindex="4">时
+						<input class="hide" type="text" id="close_datetime" name="close_datetime" >
+					</div>
+					<div class="line" style="margin-top:20px;">
+						<input type="checkbox" name="include_judge" value="1" tabindex="5"/>
+						<strong>加入"百家争鸣"阶段</strong>
+						<span>（"一家之言"完成后，匿名点评各家方案）</span>
+					</div>
+				</div>
+				<div class="ctrl" style="margin-top: 20px;">
+					<label>
+						<input type="submit" value="确 定" tabindex="6" name="commit" class="btn" />
+					</label>
+					<label style="margin-left:10px;">
+						<input type="button" value="取 消" tabindex="7" name="cancel" class="btn" />
+					</label>
+					
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<include file="./Tpl/Public/footer_bodyend.html" />
