@@ -25,54 +25,66 @@
 	
 		$('#email').focus();
 		$('#email').blur(function(){
-			if (validateEmail(this, msg[0], '请输入有效的邮箱', '')) {
-				var inputEmail = this.value;				
-				$.post(
-					"__URL__/checkEmail",
-					{email: inputEmail},
-					checkEmailResponse,
-					"json"
-				);
-			} else {
-				$('.register').hide();
-				$('#login').val('登录/注册').attr("disabled", "disabled");
-				slideBox(msg, 2000, 'red');
+			if (this.value.length > 0) {
+				if (validateEmail(this, msg[0], '请输入有效的邮箱', '')) {
+					var inputEmail = this.value;				
+					$.post(
+						"__URL__/checkEmail",
+						{email: inputEmail},
+						checkEmailResponse,
+						"json"
+					);
+				} else {
+					$('.register').hide();
+					$('#login').val('登录/注册').attr("disabled", "disabled");
+					slideBox(msg, 2000, 'red');
+				}
 			}
 		});
 		
-		$('#login').click(function(){
-			refreshVerify();
-			
-			if (!validateEmail($('#email')[0], msg[0], '请输入有效的邮箱', '')){
+		$('#login').click(function(){			
+			if (!validateEmail($('#email')[0], msg[0], '请输入有效的邮箱', '')
+				|| !validateLength(6, 12, $('#password')[0], msg[0], '密码有效长度为6~12位', '')){
 				slideBox(msg, 2000, 'red');
+				refreshVerify();
 				return false;
 			}		
 
 			var action = $('#login').val();			
 			var mail = $('#email').val();
+			var pwd = $('#password').val();
 			if (action === '注册') {
-				if (!validateLength(6, 12, $('#password')[0], msg[0], '密码有效长度为6~12位', '')
-					|| !validateNonEmpty($('#name')[0], msg[0], '昵称不能为空', '')
+				if (!validateNonEmpty($('#name')[0], msg[0], '昵称不能为空', '')
 					|| !validateNonEmpty($('#verify')[0], msg[0], '验证码不能为空', '')){
 					
 					slideBox(msg, 2000, 'red');
+					refreshVerify();
 					return false;
-				}	
+				}				
 				
-				var pwd = $('#password').val();
 				var userName = $('#name').val();
+				var verifyCode = $('#verify').val();
 				$.post(
 					"__URL__/addUser",
 					{
 						email: mail,
 						password: pwd,
-						name: userName						
+						name: userName,
+						verify: verifyCode
 					},
 					showResponse,
 					"json"
 				);
 			} else if (action === '登录') {
-			
+				$.post(
+					"__URL__/loginUser",
+					{
+						email: mail,
+						password: pwd
+					},
+					showResponse,
+					"json"
+				);
 			}
 		});
 	});
@@ -80,6 +92,12 @@
 	function showResponse(data) {
 		if (data.status === 0) {
 			slideBox(msg.text(data.info), 2000, 'red');
+			if (data.info === '邮箱或密码输入有误') {
+				$('#forgotPassword').show();
+			}
+			refreshVerify();
+		} else {
+			window.location = "__APP__";
 		}
 	}
 	
@@ -88,6 +106,7 @@
 			$('.register').show();
 			$('#login').val('注册');
 		} else {
+			$('.register').hide();
 			$('#login').val('登录');
 		}
 		$('#login').removeAttr("disabled");
@@ -100,33 +119,43 @@
 </script>
 </head>
 <body>
-	<header>
+	<header style="margin-top: 100px; height: 200px;">
 	</header>
 	<div id="wrapper">
-		<div id="topSlideMsg"></div>
+		<div id="topSlideMsg"></div>		
 		<div class="panel_wrapper">
-			<div class="main">
-				<div>
-					邮箱 <input id="email" class="text" type="text" tabindex="1">
-				</div>
-				<div>
-					密码 <input id="password" class="text" type="password" tabindex="2"> 
-				</div>
-				<div class="hide register">
-					昵称 <input id="name" class="text" type="text" tabindex="3">
-				</div>
-				<div class="hide register">
-					验证 <input id="verify" class="text" type="text" tabindex="4">&nbsp;<img id="verifyImg" src="__URL__/showVerifyImage/" alt="Verify Image" >
-				</div>
+			<div class="panelbody" style="float:left;">
+				<div style="width:490px; height:187px;">fsafjsdalfjsdla</div>
 			</div>
-			<div class="ctrl">
-				<span>
-					<input id="login" type="button" value="登录/注册" tabindex="5" class="btn" disabled="disabled">
-				</span>
-				<span>
-					<input type="button" value="找回密码" tabindex="6" class="btn hide">
-				</span>
+			<div class="panelbody" style="float:right;">
+				<div class="main" style="height:142px;">
+					<div>
+						<strong>邮箱</strong>
+						<input id="email" style="width: 200px;" class="text" type="text" tabindex="1">
+					</div>
+					<div>
+						<strong>密码</strong>
+						<input id="password" style="width: 200px;" class="text" type="password" tabindex="2"> 
+					</div>
+					<div class="hide register">
+						<strong>昵称</strong>
+						<input id="name" style="width: 200px;" class="text" type="text" tabindex="3">
+					</div>
+					<div class="hide register">
+						<strong>验证</strong>
+						<input id="verify" style="width: 143px;" class="text" type="text" tabindex="4">&nbsp;<img style="vertical-align:middle;" id="verifyImg" src="__URL__/showVerifyImage/" alt="Verify Image" >
+					</div>
+				</div>
+				<div class="ctrl">
+					<span>
+						<input id="login" type="button" value="登录/注册" tabindex="5" class="btn" disabled="disabled">
+					</span>
+					<span>
+						<input id="forgotPassword" type="button" value="找回密码" tabindex="6" class="btn hide">
+					</span>
+				</div>
 			</div>
 		</div>
+		
 	</div>
 <include file="./Tpl/Public/footer_bodyend.html" />

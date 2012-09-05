@@ -1,37 +1,5 @@
 <?php
 class UserAction extends Action {
-//	public function register() {
-//		$this->display();
-//	}
-	
-	public function addUser() {
-		if($this->isPost()) {
-			$User = D('User');
-			if($_SESSION['verify'] != md5($_POST['verify'])){
-				$this->error('验证码不匹配');
-			}
-			
-			// if($User->create()) {
-				// if(!preg_match('/^.{6,12}$/', $User->password)){
-					// $this->error('密码有效长度为6~12位');
-				// }				
-				
-				// $User->password = sha1($User->password);
-				// $username = $User->user_name;
-				// if($user_id = $User->add()) {
-					// setSessionCookie($user_id, $username);
-					// $this->success('注册成功');
-				// } else {
-					// $this->error('保存失败');
-				// }				
-			// } else {
-				// $this->error($User->getError());
-			// }
-		} else {
-			$this->error();
-		}
-	}
-	
 	public function login() {
 		$this->display();
 	}
@@ -41,7 +9,7 @@ class UserAction extends Action {
 			$email = $_POST['email'];
 			$User = M('User');
 			if ($currUser = $User->where("email = '$email'")
-								->field("user_id, name, password")
+								->field("user_id, name, password, email")
 								->find()) {
 				$_SESSION['currUser'] = $currUser;
 				$this->success();
@@ -53,20 +21,51 @@ class UserAction extends Action {
 		}		
 	}
 	
+	public function addUser() {
+		if($this->isPost()) {
+			$User = D('User');
+			if($_SESSION['verify'] != md5($_POST['verify'])){
+				$this->error('验证码不匹配');
+			}
+			
+			if($User->create()) {
+				if(!preg_match('/^.{6,12}$/', $User->password)){
+					$this->error('密码有效长度为6~12位');
+				}				
+				
+				$User->password = sha1($User->password);
+				$username = $User->name;
+				if($user_id = $User->add()) {
+					setSessionCookie($user_id, $username);
+					$this->success();
+				} else {
+					$this->error('保存失败');
+				}				
+			} else {
+				$this->error($User->getError());
+			}
+		} else {
+			$this->error();
+		}
+	}
+	
 	public function loginUser() {
 		if($this->isPost()) {
 			$email = $_POST['email'];
 			$shaPwd = sha1($_POST['password']);
-			$User = M('User');
-			if ($currUser = $User
-							->where("email = '$email' and password = '$shaPwd'")
-							->field("user_id, user_name")
-							->find()) {
-				setSessionCookie($currUser['user_id'], $currUser['user_name']);
-				$this->success('登录成功');
+			
+			$currUser = $_SESSION['currUser'];
+			if ($email === $currUser['email']
+				&& $shaPwd === $currUser['password']) {
+				
+				setSessionCookie($currUser['user_id'], $currUser['name']);
+				unset($_SESSION['currUser']);
+				$this->success();
 			} else {
-				$this->error('邮箱或密码错误');
-			}
+				$this->error('邮箱或密码输入有误');
+			}		
+		} else {
+			$this->error();
 		}
 	}
 	

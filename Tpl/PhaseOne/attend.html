@@ -1,0 +1,20 @@
+<include file="./Tpl/Public/headstart.html" />
+	<title>风暴孵化 - 一家之言</title>
+	<link rel="stylesheet" href="__PUBLIC__/css/common.css" />
+	<link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
+	<style>
+		#wrapper {
+			margin: 50px auto;
+			width: 640px;
+		}
+	</style>
+</head>
+<body>
+<div id="wrapper">
+	<div id="topSlideMsg"></div>
+	<div style="text-align:center;">
+		<span style="background-color:lightgreen; font-size:16px; padding:10px;"><strong>{$subject.close_datetime|strtotime|date="n月j日 H时", ###}</strong> 前给出方案，才能进入下一环节</span>
+	</div>
+	
+</div>
+<include file="./Tpl/Public/footer_bodyend.html" />
