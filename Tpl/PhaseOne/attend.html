@@ -1,20 +1,89 @@
 <include file="./Tpl/Public/headstart.html" />
-	<title>风暴孵化 - 一家之言</title>
+	<title>一家之言</title>
 	<link rel="stylesheet" href="__PUBLIC__/css/common.css" />
+	<link rel="stylesheet" href="__PUBLIC__/css/head_panel.TopRightBtn.css" />
 	<link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
 	<style>
+		header, #wrapper {
+			margin: 0 auto;
+		}
+		
+		header {
+			padding-bottom: 100px;
+			width: 960px;			
+		}
+		
 		#wrapper {
-			margin: 50px auto;
+			clear: both;
 			width: 640px;
 		}
+		
+		.line {
+			margin-bottom: 10px;
+		}
+		
+		.main div, .main span, .main strong {
+			font-size: 15px;
+		}
 	</style>
-</head>
-<body>
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script src="__PUBLIC__/javascript/InputValidate.js"></script>
+	<script src="__PUBLIC__/javascript/jqTools.js"></script>
+	<script>
+		var msg;
+		
+		$(function(){
+			msg = $('#topSlideMsg');
+			
+			$('#add_solution_form').submit(function(){
+				var isValid = validateNonEmpty($('#content')[0], msg[0], '看法（方案）内容不能为空', '');
+				if (!isValid) {
+					slideBox(msg, 2000, 'red');
+				}
+				return isValid;
+			});
+		});
+	</script>
+<include file="./Tpl/Public/headend_bodystart_banner.html" />
 <div id="wrapper">
 	<div id="topSlideMsg"></div>
-	<div style="text-align:center;">
-		<span style="background-color:lightgreen; font-size:16px; padding:10px;"><strong>{$subject.close_datetime|strtotime|date="n月j日 H时", ###}</strong> 前给出方案，才能进入下一环节</span>
+	<div class="panel_wrapper">
+		<form method="post" action="__URL__/addSolution" id="add_solution_form">
+			<h1>头脑风暴 之 "一家之言"</h1>
+			<div class="panelbody">
+				<div class="main">
+					<div style="text-align:center;margin-top:10px;margin-bottom:20px;">
+						<span style="background-color:lightgreen; padding:10px;"><strong>{$subject.close_datetime|strtotime|date="n月j日 H时", ###}</strong> 前给出方案，才能进入下一环节</span>
+					</div>
+					<div class="hide">
+						<input type="text" name="subject_id" value="{$subject.subject_id}">
+						<input type="text" name="user_id" value="{$user_id}">
+						<if condition="isset($hisSolution)">
+							<input type="text" name="solution_id" value="{$hisSolution.solution_id}">
+						</if>
+					</div>
+					<div class="line">
+						<strong>风暴主题：</strong>
+						<span>{$subject.name}</span>
+					</div>
+					<div class="line">
+						<strong>补充说明：</strong>
+						<span>{$subject.desc}</span>
+					</div>
+					<div class="line">
+						<strong>我的看法/方案：</strong>
+					</div>
+					<div class="line">
+						<textarea id="content" style="width:600px; height:100px;text-align:left;" class="text" tabindex="1" name="content">{$hisSolution.content}</textarea>
+					</div>				
+				</div>
+				<div class="ctrl">
+					<label>
+						<input style="font-size:15px;" type="submit" value="确 定" tabindex="2" name="commit" class="btn" />
+					</label>
+				</div>
+			</div>
+		</form>
 	</div>
-	
 </div>
 <include file="./Tpl/Public/footer_bodyend.html" />

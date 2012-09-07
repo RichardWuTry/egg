@@ -100,7 +100,11 @@
 			}
 			refreshVerify();
 		} else {
-			window.location = "__APP__";
+			<if condition="empty($token)">
+				window.location = "__APP__";
+			<else />
+				window.location = "__APP__/PhaseOne/attend/token/{$token}";
+			</if>			
 		}
 	}
 	
@@ -151,7 +155,7 @@
 				</div>
 				<div class="ctrl">
 					<span>
-						<input id="login" style="font-size:15px;" type="button" value="登录/注册" tabindex="5" class="btn" disabled="disabled">
+						<input id="login" style="font-size:15px;" type="button" value="注册/登录" tabindex="5" class="btn" disabled="disabled">
 					</span>
 					<span>
 						<input id="forgotPassword" style="font-size:15px;" type="button" value="找回密码" tabindex="6" class="btn hide">

@@ -1,6 +1,15 @@
 <?php
 class UserAction extends Action {
 	public function login() {
+		if (!empty($_GET['token'])) {
+			$token = $_GET['token'];
+			if ($subjectId = decryptToken($token)){
+				$this->assign('token', $token);
+			} else {
+				$this->error();
+			}			
+		}
+	
 		$this->display();
 	}
 	
