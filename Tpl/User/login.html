@@ -3,16 +3,16 @@
 <link rel="stylesheet" href="__PUBLIC__/css/common.css" />
 <link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
 <style>
-	header, #wrapper {
-		margin: 0 auto;
-		width: 800px;
+	#wrapper {
+		margin:70px auto; 
+		width:1080px;
 	}
 	
 	.main div {
 		margin-bottom: 5px;
 	}
 	
-	strong {
+	span {
 		font-size: 15px;
 		font-weight: normal;
 	}
@@ -126,30 +126,26 @@
 </script>
 </head>
 <body>
-	<header style="margin-top: 100px; height: 200px;">
-	</header>
-	<div id="wrapper">
-		<div id="topSlideMsg"></div>		
-		<div class="panel_wrapper">
-			<div class="panelbody" style="float:left;">
-				<div style="width:490px; height:187px;">fsafjsdalfjsdla</div>
-			</div>
-			<div class="panelbody" style="float:right;">
+<div id="wrapper">
+	<div id="topSlideMsg"></div>
+	<div style="float:left;border-width:1px;border-style:solid;border-radius:3px;border-color:#D8DEE2;">
+		<div class="panel_wrapper" style="float:left;margin:0;">		
+			<div class="panelbody" style="height:425px;border:none;border-radius:0;">			
 				<div class="main" style="height:142px;">
 					<div>
-						<strong>邮箱</strong>
+						<span>邮箱</span>
 						<input id="email" style="width: 200px;" class="text" type="text" tabindex="1">
 					</div>
 					<div>
-						<strong>密码</strong>
+						<span>密码</span>
 						<input id="password" style="width: 200px;" class="text" type="password" tabindex="2"> 
 					</div>
 					<div class="hide register">
-						<strong>昵称</strong>
+						<span>昵称</span>
 						<input id="name" style="width: 200px;" class="text" type="text" tabindex="3">
 					</div>
 					<div class="hide register">
-						<strong>验证</strong>
+						<span>验证</span>
 						<input id="verify" style="width: 143px;" class="text" type="text" tabindex="4">&nbsp;<img style="vertical-align:middle;" id="verifyImg" src="__URL__/showVerifyImage/" alt="Verify Image" >
 					</div>
 				</div>
@@ -163,6 +159,9 @@
 				</div>
 			</div>
 		</div>
-		
+		<div style="float:left;">
+			<img src="__PUBLIC__/images/slogan1.png" alt="头脑风暴鸡" />
+		</div>
 	</div>
+</div>
 <include file="./Tpl/Public/footer_bodyend.html" />

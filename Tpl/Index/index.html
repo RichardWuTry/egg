@@ -6,7 +6,6 @@
 <style>
 	header {
 		margin: 0 auto;
-		padding-bottom: 50px;
 		width: 960px;
 	}
 	
@@ -32,9 +31,9 @@
 		min-height: 100px;
 		border-radius: 3px 3px 3px 3px;
 		border: 1px dashed #6b808d;
-		padding: 5px;
-	}
-	
+		padding: 6px;
+	}	
+
 	strong, div, span, a {
 		font-size: 15px;
 	}
@@ -54,23 +53,50 @@
 		<volist name="storms" id="subject">
 			<div class="panel_wrapper">
 				<div class="float_right" style="margin:8px 15px 0 0;">
-					<a href="#" style="color:#FFFFFF;">[修 改]</a>
+					<a href="#" style="color:#FFFFFF;">[修 改]</a>&nbsp;
+					<a href="#" style="color:#FFFFFF;">[隐 藏]</a>
 				</div>
 				<h2>
 					{$subject.name}
 				</h2>
 				<div class="panelbody">
 					<div>
-						<span style="background-color:lightgreen; margin-bottom:5px; padding:5px;">发送链接给参与者：</span>
-						<input type="text" class="text link" value="http://{$serverName}__APP__/PhaseOne/attend/token/{$subject.token}" style="width:765px;">
+						<span style="background-color:#BCF5BC;padding:5px;">发送链接给参与者：</span>
+						<input type="text" class="text link" value="http://{$serverName}__APP__/User/login/token/{$subject.token}" style="width:765px;">
 					</div>
+					<if condition="!empty($subject['desc'])">
+						<div style="margin-top:10px;">
+							<strong>补充说明：</strong>
+							<span>{$subject.desc}</span>
+						</div>
+					</if>
 					<div style="margin-top:10px;">
 						<div class="stage" style="float:left;">
-							<strong>一家之言</strong>
+							<div style="float:right;">
+								<a href="#" style="color:blue;">查看详情</a>
+							</div>
+							<div style="margin-bottom:15px;">
+								<strong>一家之言</strong>
+							</div>
+							<div style="margin-bottom:15px;">								
+								<strong>{$solutions[$subject['subject_id']]|count}人已独立给出方案：</strong>
+								<volist name="solutions[$subject['subject_id']]" id="sol">
+									<span title="{$sol['email']}" style="padding:5px;margin-right:5px;background-color:#BCF5BC;">{$sol['name']}</span>
+								</volist>
+							</div>
+							<div>
+								<if condition="$subject.close_datetime gt date('Y-m-d H:i:s')">
+									<span style="padding:5px;background-color:#FFE6E6;">{$subject.close_datetime|strtotime|date="Y年n月j日 H时", ###} 将关闭</span>
+								<else />
+									<span style="padding:5px;background-color:#FFE6E6;">已关闭</span>
+								</if>
+							</div>
 						</div>
+						<if condition="$subject.include_judge eq 1">
 						<div class="stage" style="float:right;">
 							<strong>百家争鸣</strong>
 						</div>
+						</if>
 					</div>
 				</div>
 			</div>

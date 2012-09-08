@@ -9,8 +9,7 @@
 		}
 		
 		header {
-			padding-bottom: 100px;
-			width: 960px;			
+			width: 960px;
 		}
 		
 		#wrapper {
@@ -66,10 +65,12 @@
 						<strong>风暴主题：</strong>
 						<span>{$subject.name}</span>
 					</div>
-					<div class="line">
-						<strong>补充说明：</strong>
-						<span>{$subject.desc}</span>
-					</div>
+					<if condition="!empty($subject['desc'])">
+						<div class="line">
+							<strong>补充说明：</strong>
+							<span>{$subject.desc}</span>
+						</div>
+					</if>
 					<div class="line">
 						<strong>我的看法/方案：</strong>
 					</div>

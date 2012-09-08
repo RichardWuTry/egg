@@ -15,6 +15,26 @@ class IndexAction extends Action {
 							->select()) {
 			$this->assign('storms', $storms);
 			$this->assign('serverName', $_SERVER["SERVER_NAME"]);
+			
+			$Model = M();
+			$solutions = array();
+			foreach($storms as $s) {
+				$subjectId = $s['subject_id'];
+				if ($sol = $Model->query("select
+											u.name,
+											u.email
+										from
+											solution s
+											join
+											user u
+											on
+												s.user_id = u.user_id
+										where
+											s.subject_id = $subjectId")) {
+					$solutions[$subjectId] = $sol;
+				}
+			}
+			$this->assign('solutions', $solutions);
 		}
 
 		$this->assign('user_id', $userId);

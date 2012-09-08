@@ -54,7 +54,7 @@ class PhaseOneAction extends Action {
 					}
 				} else {
 					if ($Solution->save()) {
-						$this->error("一家之言更新成功");
+						$this->error("一家之言更新成功 :-)");
 					} else {
 						$this->error("一家之言未更新");
 					}
