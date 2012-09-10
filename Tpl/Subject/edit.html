@@ -40,7 +40,7 @@
 		
 		$('.datepicker').datepicker({ minDate: 0});
 		
-		$('#create_storm_form').submit(function(){
+		$('#edit_storm_form').submit(function(){
 			if (validateForm()){
 				var closeDatetime = $('#close_date').val() + ' ' + fillZero($('#close_hour').val()) + ':00:00';
 				$('#close_datetime').val(closeDatetime);
@@ -49,11 +49,11 @@
 				slideBox(msg, 2000, 'red');
 				return false;
 			}
-		});
+		});		
 		
 		$('#cancel').click(function(){
 			window.location = "__APP__";
-		});
+		});		
 	});
 	
 	function isHourValid(inputHour) {
@@ -95,34 +95,38 @@
 <div id="wrapper">
 	<div id="topSlideMsg"></div>
 	<div class="panel_wrapper">
-		<form method="post" action="__URL__/add" id="create_storm_form">
-			<h1>启动风暴</h1>
+		<form method="post" action="__URL__/save" id="edit_storm_form">
+			<h1>修改风暴</h1>
 			<div class="panelbody">
 				<div class="main">
 					<div class="line">
 						<strong>风暴主题</strong>
 					</div>
 					<div class="line">
-						<input id="user_id" name="user_id" value="{$user_id}" type="text" class="hide">
-						<input id="storm_name" style="width:600px;" class="text" type="text" tabindex="1" name="name">
+						<input id="subject_id" name="subject_id" value="{$subject.subject_id}" type="text" class="hide">
+						<input id="storm_name" style="width:600px;" class="text" type="text" tabindex="1" name="name" value="{$subject.name}">
 					</div>
 					<div class="line">
 						<strong style="vertical-align:top;">补充说明</strong>
 					</div>
 					<div class="line">
-						<textarea id="storm_desc" style="width:600px; height:100px;" class="text" tabindex="2" name="desc"></textarea>
+						<textarea id="storm_desc" style="width:600px; height:100px;" class="text" tabindex="2" name="desc">{$subject.desc}</textarea>
 					</div>
 					<div class="line" style="margin-top:20px;">
 						<strong>"一家之言"结束时间</strong>
 						<span>（参与者独立给出方案的截止时间，未及时提交将无法参与下一阶段）</span>
 					</div>
 					<div class="line">
-						<input id="close_date" class="datepicker text" style="width:80px;" type="text" tabindex="3">日
-						<input type="text" class="text" style="width:20px;" id="close_hour" maxlength="2" value="18" tabindex="4">时
+						<input id="close_date" class="datepicker text" style="width:80px;" type="text" tabindex="3" value="{$subject.close_datetime|substr=###,0,10}">日
+						<input type="text" class="text" style="width:20px;" id="close_hour" maxlength="2" value="{$subject.close_datetime|substr=###,11,2}" tabindex="4">时
 						<input class="hide" type="text" id="close_datetime" name="close_datetime" >
 					</div>
 					<div class="line" style="margin-top:20px;">
-						<input type="checkbox" name="include_judge" value="1" tabindex="5"/>
+						<if condition="$subject['include_judge'] eq 1">
+							<input type="checkbox" name="include_judge" value="1" checked="checked" tabindex="5"/>
+						<else />
+							<input type="checkbox" name="include_judge" value="1" tabindex="5"/>
+						</if>						
 						<strong>加入"百家争鸣"阶段</strong>
 						<span>（"一家之言"完成后，匿名点评各家方案）</span>
 					</div>

@@ -13,13 +13,16 @@
 		clear: both;
 	}
 	
+	#startStorm, .hideSubject {
+		cursor: pointer;
+	}
+	
 	#startStorm {
 		width:100%;
 		border-top: 2px solid gray;
 		text-align: center;
 		font-size: 3em;
 		font-weight: bold;
-		cursor: pointer;
 	}
 	
 	a {
@@ -44,17 +47,45 @@
 		$('.link').click(function(){
 			$(this).select();
 		});
+		
+		$('.hideSubject').click(function(){
+			var hideSubject_id = this.id;
+			var sId = hideSubject_id.substr(hideSubject_id.indexOf('_')+1);
+			$.post(
+				"__URL__/inactive",
+				{
+					subjectId: sId
+				},
+				hideResponse,
+				"json"
+			);
+		});
+		
+		$('.sendPhaseTwoMail').click(function(){
+			
+		});
 	});
+	
+	function hideResponse(data) {
+		if (data.status === 0) {
+			slideBox(msg.text(data.info), 2000, 'red');
+		} else {
+			var hideId = "#"+data.info;
+			$(hideId).fadeOut(1000);
+		}
+	}
 </script>
 <include file="./Tpl/Public/headend_bodystart_banner.html" />
 <div id="wrapper">
 	<div id="topSlideMsg"></div>
 	<div class="storms" style="max-width: 960px; margin: 0 auto;">
 		<volist name="storms" id="subject">
-			<div class="panel_wrapper">
+			<div class="panel_wrapper" id="subject_{$subject.subject_id}">
 				<div class="float_right" style="margin:8px 15px 0 0;">
-					<a href="#" style="color:#FFFFFF;">[修 改]</a>&nbsp;
-					<a href="#" style="color:#FFFFFF;">[隐 藏]</a>
+					<if condition="$subject.close_datetime lt date('Y-m-d H:i:s',strtotime('-1 months'))">
+						<span id="hideSubject_{$subject.subject_id}" class="hideSubject" style="color:#FFFFFF;">[隐 藏]</span>&nbsp;
+					</if>
+					<a href="__APP__/Subject/edit/id/{$subject.subject_id}" style="color:#FFFFFF;">[修 改]</a>					
 				</div>
 				<h2>
 					{$subject.name}
@@ -73,7 +104,7 @@
 					<div style="margin-top:10px;">
 						<div class="stage" style="float:left;">
 							<div style="float:right;">
-								<a href="#" style="color:blue;">查看详情</a>
+								<a href="__APP__/PhaseOne/showDetail/id/{$subject.subject_id}" style="color:blue;">查看详情</a>
 							</div>
 							<div style="margin-bottom:15px;">
 								<strong>一家之言</strong>
@@ -94,7 +125,20 @@
 						</div>
 						<if condition="$subject.include_judge eq 1">
 						<div class="stage" style="float:right;">
-							<strong>百家争鸣</strong>
+							<div style="float:right;">
+								<a href="__APP__/PhaseTwo/showDetail/id/{$subject.subject_id}" style="color:blue;">查看详情</a>
+							</div>
+							<div style="margin-bottom:7px;">
+								<strong>百家争鸣</strong>
+							</div>
+							<div>
+								<if condition="empty($solutions[$subject['subject_id']])">
+									<input type="button" value="发送匿名互评邮件" class="btn" style="font-size:15px;" disabled="disabled">
+								<else/>
+									<input id="sendMail_{$subject.subject_id}" type="button" value="发送匿名互评邮件" class="btn sendPhaseTwoMail" style="font-size:15px;">
+								</if>
+							</div>
+							
 						</div>
 						</if>
 					</div>

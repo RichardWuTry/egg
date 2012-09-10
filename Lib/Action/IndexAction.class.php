@@ -10,7 +10,7 @@ class IndexAction extends Action {
     public function index(){
 		$userId = $_SESSION['user_id'];
 		$Subject = M('Subject');
-		if ($storms = $Subject->where("user_id = $userId")
+		if ($storms = $Subject->where("user_id = $userId and is_active = 1")
 							->order('create_at desc')
 							->select()) {
 			$this->assign('storms', $storms);
@@ -41,5 +41,20 @@ class IndexAction extends Action {
 		$this->assign('user_name', $_SESSION['user_name']);
 		$this->display();
     }
+	
+	public function inactive(){
+		if ($this->isPost()){
+			$subjectId = $_POST['subjectId'];
+			$userId = $_SESSION['user_id'];
+			$data['is_active'] = 0;
+			$Subject = M('Subject');
+			if ($Subject->where("subject_id = $subjectId and user_id = $userId")
+						->save($data)){
+				$this->success('subject_'.$subjectId);
+			} else {
+				$this->error('未能隐藏该风暴');
+			}
+		}
+	}
 }
 ?>

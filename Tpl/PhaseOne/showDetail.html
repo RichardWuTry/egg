@@ -1,0 +1,62 @@
+<include file="./Tpl/Public/headstart.html" />
+	<title>一家之言 详情</title>
+	<link rel="stylesheet" href="__PUBLIC__/css/common.css" />
+	<link rel="stylesheet" href="__PUBLIC__/css/head_panel.TopRightBtn.css" />
+	<link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
+	<style>
+		header, #wrapper {
+			margin: 0 auto;
+		}
+		
+		header {
+			width: 960px;
+		}
+		
+		#wrapper {
+			clear: both;
+			width: 640px;
+		}
+		
+		.line {
+			margin-bottom: 10px;
+		}
+		
+		.main div, .main span, .main strong {
+			font-size: 15px;
+		}
+	</style>
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script>
+		var msg;
+		
+		$(function(){
+			msg = $('#topSlideMsg');
+			
+			$('#back').click(function(){
+				window.location = "__APP__";
+			});
+		});
+	</script>
+<include file="./Tpl/Public/headend_bodystart_banner.html" />
+<div id="wrapper">
+	<div id="topSlideMsg"></div>
+	<div class="panel_wrapper">
+		<h1>当前有{$solutions|count}人已给出方案/看法</h1>
+		<div class="panelbody">
+			<div class="main">
+				<volist name="solutions" id="sol">
+					<div class="line">
+						<strong>{$sol.name}</strong> <span>({$sol.email})：</span>
+						<span>{$sol.content}</span>
+					</div>
+				</volist>
+			</div>
+			<div class="ctrl">
+				<label>
+					<input id="back" style="font-size:15px;" type="button" value="返 回" tabindex="1" class="btn" />
+				</label>
+			</div>
+		</div>
+	</div>
+</div>
+<include file="./Tpl/Public/footer_bodyend.html" />

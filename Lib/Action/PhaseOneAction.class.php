@@ -66,5 +66,36 @@ class PhaseOneAction extends Action {
 			$this->error();
 		}
 	}
+	
+	public function showDetail(){
+		if (empty($_GET['id'])){
+			$this->error();
+		} else {
+			$subjectId = $_GET['id'];
+			$userId = $_SESSION['user_id'];
+			$Subject = M('Subject');
+			if ($Subject->where("subject_id = $subjectId and user_id = $userId")
+						->find()){
+				$Model = M();
+				if ($solutions = $Model->query("select
+													u.name,
+													u.email,
+													s.content
+												from
+													solution s
+													join
+													user u
+													on
+														s.user_id = u.user_id
+												where
+													s.subject_id = $subjectId")) {
+					$this->assign('solutions', $solutions);					
+				}
+				$this->display();
+			} else {
+				$this->error();
+			}
+		}
+	}
 }
 ?>
