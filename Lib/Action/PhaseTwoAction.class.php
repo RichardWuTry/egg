@@ -9,9 +9,10 @@ class PhaseTwoAction extends Action {
 	
 	function sendMail() {
 		if ($this->isPost()) {
-			$subjectId = $_POST['subjectId'];
+			$subjectId = $_POST['subjectId'];			
 			$Model = M();
 			if ($users = $Model->query("select
+											s.solution_id,
 											u.name,
 											u.email
 										from
@@ -22,14 +23,23 @@ class PhaseTwoAction extends Action {
 												s.user_id = u.user_id
 										where
 											s.subject_id = $subjectId")) {
-				$hostName = $_SESSION['user_name'];
+				$hostId = $_SESSION['user_id'];
+				$User = M('User');
+				$host = $User->where("user_id = $hostId")
+							->field("name, email")
+							->find();
+											
 				$subject = '[头脑风暴鸡] 百家争鸣邀请';
 				require_once COMMON_PATH.'/Mail/mail.php';
 				for ($i = 0; $i < count($users); $i++) {
 					$userName = $users[$i]['name'];
 					$userMail = $users[$i]['email'];
+					$token = encryptId($users[$i]['solution_id']);
 					
-					
+					$body = $this->prepareEmailBody($host['name'], 
+													$host['email'], 
+													$userName,
+													$token);
 				}							
 				$this->success('sendMail');
 			} else {
@@ -40,10 +50,10 @@ class PhaseTwoAction extends Action {
 		}
 	}
 	
-	private function prepareEmailBody($userName, $token) {
+	private function prepareEmailBody($hostName, $hostMail, $userName, $token) {
 		$serverName = $_SERVER["SERVER_NAME"];
 		$index_page_link = "http://$serverName".__APP__;
-		$reset_password_link = "http://$serverName".__URL__."/resetPassword/token/$token/";
+		$phase_two_link = "http://$serverName".__URL__."/attend/token/$token/";
 		
 		$body = file_get_contents(TMPL_PATH.'/User/newPasswordEmail.html');
 		$body = mb_eregi_replace('{index_page}', $index_page_link, $body);
