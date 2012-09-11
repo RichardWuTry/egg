@@ -42,8 +42,13 @@
 	}
 </style>
 <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+<script src="__PUBLIC__/javascript/jqTools.js"></script>
 <script>
+	var msg;
+
 	$(function(){
+		msg = $('#topSlideMsg');
+	
 		$('.link').click(function(){
 			$(this).select();
 		});
@@ -62,7 +67,21 @@
 		});
 		
 		$('.sendPhaseTwoMail').click(function(){
-			
+			var sendMail_id = this.id;
+			var sId = sendMail_id.substr(sendMail_id.indexOf('_')+1);
+			var waitingCss = {
+								"background":"#FFFFFF url('__PUBLIC__/images/waiting.gif') no-repeat 105px 6px"
+							};
+			$(this).attr('disabled', 'disabled').val('邮件发送中...     ').css(waitingCss);
+			$.post(
+				"__APP__/PhaseTwo/sendMail",
+				{
+					subjectId: sId,
+					
+				},
+				sendMailResponse,
+				"json"
+			);
 		});
 	});
 	
@@ -72,6 +91,14 @@
 		} else {
 			var hideId = "#"+data.info;
 			$(hideId).fadeOut(1000);
+		}
+	}
+	
+	function sendMailResponse(data) {
+		if (data.status === 0) {
+			slideBox(msg.text(data.info), 2000, 'red');
+		} else {
+			slideBox(msg.text(data.info), 2000, 'green');
 		}
 	}
 </script>
