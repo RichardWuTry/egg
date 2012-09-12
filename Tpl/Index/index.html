@@ -1,5 +1,5 @@
 <include file="./Tpl/Public/headstart.html" />
-<title>头脑风暴鸡</title>
+<title>头脑风暴机</title>
 <link rel="stylesheet" href="__PUBLIC__/css/common.css" />
 <link rel="stylesheet" href="__PUBLIC__/css/head_panel.TopRightBtn.css" />
 <link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
@@ -30,8 +30,7 @@
 	}
 	
 	div.stage {
-		width: 48.1%;
-		min-height: 100px;
+		min-height: 100%;
 		border-radius: 3px 3px 3px 3px;
 		border: 1px dashed #6b808d;
 		padding: 6px;
@@ -96,9 +95,18 @@
 	
 	function sendMailResponse(data) {
 		if (data.status === 0) {
-			slideBox(msg.text(data.info), 2000, 'red');
+			slideBox(msg.text(data.info), 3000, 'red');			
 		} else {
-			slideBox(msg.text(data.info), 2000, 'green');
+			slideBox(msg.text(data.info), 3000, 'green');
+		}
+		var retObj = data.data;
+		if (retObj) {
+			var subjectId = retObj['subject_id'];
+			var phaseTwoToken = retObj['phase_two_token'];
+			var phaseTwoLink = "http://{$serverName}__APP__/User/login/token/"+phaseTwoToken;
+			$('#subject_'+subjectId+' .phase_two_link input').val(phaseTwoLink);
+			$('#subject_'+subjectId+' .send_mail_div').hide();				
+			$('#subject_'+subjectId+' .phase_two_link').val(phaseTwoLink).show();			
 		}
 	}
 </script>
@@ -128,8 +136,8 @@
 							<span>{$subject.desc}</span>
 						</div>
 					</if>
-					<div style="margin-top:10px;">
-						<div class="stage" style="float:left;">
+					<div style="margin-top:10px;height:150px;">
+						<div class="stage" style="float:left;width:40.1%">
 							<div style="float:right;">
 								<a href="__APP__/PhaseOne/showDetail/id/{$subject.subject_id}" style="color:blue;">查看详情</a>
 							</div>
@@ -151,21 +159,39 @@
 							</div>
 						</div>
 						<if condition="$subject.include_judge eq 1">
-						<div class="stage" style="float:right;">
+						<div class="stage" style="float:right;width:56.1%">
 							<div style="float:right;">
 								<a href="__APP__/PhaseTwo/showDetail/id/{$subject.subject_id}" style="color:blue;">查看详情</a>
 							</div>
 							<div style="margin-bottom:7px;">
 								<strong>百家争鸣</strong>
 							</div>
-							<div>
-								<if condition="empty($solutions[$subject['subject_id']])">
-									<input type="button" value="发送匿名互评邮件" class="btn" style="font-size:15px;" disabled="disabled">
-								<else/>
-									<input id="sendMail_{$subject.subject_id}" type="button" value="发送匿名互评邮件" class="btn sendPhaseTwoMail" style="font-size:15px;">
-								</if>
-							</div>
-							
+							<if condition="empty($subject['phase_two_token'])">
+								<div class="send_mail_div">
+									<if condition="(empty($solutions[$subject['subject_id']])) OR ($subject.close_datetime gt date('Y-m-d H:i:s'))">
+										<input type="button" value="发送匿名互评邮件" class="btn" style="font-size:15px;" disabled="disabled">
+									<else/>
+										<input id="sendMail_{$subject.subject_id}" type="button" value="发送匿名互评邮件" class="btn sendPhaseTwoMail" style="font-size:15px;">
+									</if>
+								</div>
+								<div class="phase_two_link hide">
+									<div style="margin-bottom:5px;">
+										<span>如下链接发送给未收到邮件者，或仅参与第二阶段者(不推荐)</span>
+									</div>
+									<div>
+										<input type="text" class="text link" style="width:510px;">
+									</div>	
+								</div>
+							<else/>
+								<div class="phase_two_link">
+									<div style="margin-bottom:5px;">
+										<span>如下链接发送给未收到邮件者，或仅参与第二阶段者(不推荐)</span>
+									</div>
+									<div>
+										<input type="text" class="text link" style="width:510px;" value="http://{$serverName}__APP__/User/login/token/{$subject.phase_two_token}">
+									</div>	
+								</div>
+							</if>
 						</div>
 						</if>
 					</div>

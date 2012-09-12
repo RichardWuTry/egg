@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<title>头脑风暴鸡</title>
+	<title>头脑风暴机</title>
 	<style>
 		h1 {
 			font-family:"Microsoft Yahei","微软雅黑","Helvetica Neue",Arial,"Liberation Sans",FreeSans,sans-serif;
@@ -11,8 +11,8 @@
 </head>
 <body>
 	<div style="margin:60px auto;text-align:center;">
-		<div><img src="__PUBLIC__/images/logo1.png" alt="头脑风暴鸡" /></div>
-		<h1 id="msg" style="margin-top:130px;">
+		<div style="margin-bottom:140px;"><img src="/egg/Public/images/logo1.png"></div>
+		<h1 id="msg">
 		<?php 
 			if(isset($error) && is_string($error)) {
 				echo $error;
