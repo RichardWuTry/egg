@@ -1,0 +1,101 @@
+<include file="./Tpl/Public/headstart.html" />
+	<title>百家争鸣</title>
+	<link rel="stylesheet" href="__PUBLIC__/css/common.css" />
+	<link rel="stylesheet" href="__PUBLIC__/css/head_panel.TopRightBtn.css" />
+	<link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
+	<style>
+		header, #wrapper {
+			margin: 0 auto;
+		}
+		
+		header {
+			width: 960px;
+		}
+		
+		#wrapper {
+			clear: both;
+			width: 640px;
+		}
+		
+		.line {
+			margin-bottom: 10px;
+		}
+		
+		.main div, .main span, .main strong {
+			font-size: 15px;
+		}
+	</style>
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+	<script src="__PUBLIC__/javascript/InputValidate.js"></script>
+	<script src="__PUBLIC__/javascript/jqTools.js"></script>
+	<script>
+		var msg;
+		
+		$(function(){
+			msg = $('#topSlideMsg');
+			
+			var $('#curr_id')
+		});
+		
+		function showCurrSolution() {
+			var solId = $('#curr_id').val();
+			$('#' + solId).show();
+		}
+	</script>
+<include file="./Tpl/Public/headend_bodystart_banner.html" />
+<div id="wrapper">
+	<div id="topSlideMsg"></div>
+	<div class="panel_wrapper">
+		<h1>头脑风暴 之 "百家争鸣"</h1>
+		<div class="panelbody">
+			<div class="main">
+				<div class="hide">
+					<input id="user_id" type="text" value="{$user_id}">
+					<input id="curr_id" type="text" value="1">
+				</div>
+				<div class="line">
+					<strong>风暴主题：</strong>
+					<span>{$subject.name}</span>
+				</div>
+				<if condition="!empty($subject['desc'])">
+					<div class="line">
+						<span>补充说明：</span>
+						<span>{$subject.desc}</span>
+					</div>
+				</if>
+				<volist name="comments" id="co" key="k">
+					<div class="comment hide" id="{$k}">
+						<div class="line">
+							<strong>方案 {$k} / {$comments|count}：</strong><span style="background-color:lightgreen; padding:5px;">{$co['content']}</span>
+						</div>
+						<div class="line">
+							<span>优点（1～2个）：</span>
+						</div>
+						<div class="line">
+							<textarea class="benefit" style="width:600px; height:100px;text-align:left;" class="text" tabindex="1">{$co['benefit']}</textarea>
+						</div>
+						<div class="line">
+							<span>缺点（1～2个）：</span>
+						</div>
+						<div class="line">
+							<textarea class="drawback" style="width:600px; height:100px;text-align:left;" class="text" tabindex="2">{$co['drawback']}</textarea>
+						</div>
+					</div>
+				</volist>
+			</div>
+			<div class="ctrl">
+				<div style="float:left;">
+					<input style="font-size:15px;" type="button" value="上一方案" tabindex="3" class="btn" />
+				</div>
+				<div style="float:right;">
+					<input style="font-size:15px;" type="button" value="下一方案" tabindex="5" class="btn" />
+				</div>
+				<div style="text-align:center;">
+					<input style="font-size:15px;" type="button" value="完 成" tabindex="4" class="btn" />
+				</div>
+				
+			</div>
+		</div>
+	</div>
+</div>
+<include file="./Tpl/Public/footer_bodyend.html" />

@@ -5,11 +5,12 @@ class PhaseTwoAction extends Action {
 			$this->error();
 		} else {
 			$token = $_GET['token'];
-			if ($iPos = $strpos($token, 'I')) {
+			if ($iPos = strpos($token, 'I')) {
 				$userToken = substr($token, 0, $iPos);
-				$subjectToken = substr($token, $iPos);
+				$subjectToken = substr($token, $iPos+1);
 				$userId = decryptToken($userToken);
 				$subjectId = decryptToken($subjectToken);
+				//$this->error('userId:'.$userId.'subjectId:'.$subjectId);
 				if ($userId && $subjectId) {
 					$User = M('User');
 					if ($currUser = $User->where("user_id = $userId")
@@ -28,32 +29,38 @@ class PhaseTwoAction extends Action {
 														from
 															solution s
 															left join
-															comment c
+															(select
+																comment_id,
+																solution_id,
+																benefit,
+																drawback
+															from
+																comment
+															where
+																user_id = $userId) as c
 															on
 																s.solution_id = c.solution_id
 														where
-															s.subject_id = $subjectId
-															and
-															c.user_id = $userId")){
+															s.subject_id = $subjectId")){
 								$this->assign('user_id', $userId);
 								$this->assign('user_name', $currUser['name']);								
 								$this->assign('subject', $currSubject);
 								$this->assign('comments', $comments);
 								$this->display();								
 							} else {
-								$this->error();
+								$this->error('5');
 							}						
 						} else {
-							$this->error();
+							$this->error('4');
 						}						
 					} else {
-						$this->error();
+						$this->error('3');
 					}					
 				} else {
-					$this->error();
+					$this->error('2');
 				}
 			} else {
-				$this->error();
+				$this->error('1');
 			} 
 		}
 	}
