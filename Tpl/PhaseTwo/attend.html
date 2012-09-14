@@ -34,13 +34,148 @@
 		$(function(){
 			msg = $('#topSlideMsg');
 			
-			var $('#curr_id')
+			var currDiv = getCurrDiv();
+			currDiv.show();
+			updateBtnStatus();
+			
+			$('#next').click(function(){
+				if (validateCommentInput()) {
+					$('#direction').val('next');
+					addUpdateComment();
+				} else {
+					slideBox(msg, 2000, 'red');
+				}
+			});
+			
+			$('#prev').click(function(){
+				if (validateCommentInput()) {
+					$('#direction').val('prev');
+					addUpdateComment();
+				} else {
+					slideBox(msg, 2000, 'red');
+				}
+			});
+			
+			$('#finish').click(function(){
+				if (validateCommentInput()) {
+					$('#direction').val('finish');
+					addUpdateComment();
+				} else {
+					slideBox(msg, 2000, 'red');
+				}
+			})
 		});
 		
-		function showCurrSolution() {
-			var solId = $('#curr_id').val();
-			$('#' + solId).show();
+		function getCurrDiv() {
+			var currId = $('#curr_id').val();
+			if (currId == '') {
+				currId = 1;
+			}
+			return $('#' + currId);
 		}
+		
+		function updateBtnStatus() {
+			var currId = $('#curr_id').val();
+		
+			var prevBtn = $('#prev');
+			if (currId == 1) {
+				prevBtn.attr('disabled', 'disabled');
+			} else {
+				prevBtn.removeAttr('disabled');
+			}
+			
+			var nextBtn = $('#next');
+			if (currId == {$comments|count}) {
+				nextBtn.attr('disabled', 'disabled');
+			} else {
+				nextBtn.removeAttr('disabled');
+			}
+		}
+		
+		function validateCommentInput() {
+			var currDiv = getCurrDiv();
+			var userId = $('#user_id');
+			var solutionId = currDiv.find('input.solution_id');			
+			var benefit = currDiv.find('textarea.benefit');
+			var drawback = currDiv.find('textarea.drawback');
+			
+			return (validateNonEmpty(userId[0], msg[0], '信息缺失，无法保存评论', '')
+					&& validateNonEmpty(solutionId[0], msg[0], '信息缺失，无法保存评论', '')
+					&& validateNonEmpty(benefit[0], msg[0], '请填写1～2个优点', '')
+					&& validateNonEmpty(drawback[0], msg[0], '请填写1～2个缺点', ''));
+		}
+		
+		function addUpdateComment() {
+			var currDiv = getCurrDiv();
+			var commentId = currDiv.find('input.comment_id').val();
+			var solutionId = currDiv.find('input.solution_id').val();
+			var userId = $('#user_id').val();
+			var benefitTxt = currDiv.find('textarea.benefit').val();
+			var drawbackTxt = currDiv.find('textarea.drawback').val();
+			if (commentId === '') {						
+				$.post(
+					"__URL__/addComment",
+					{
+						solution_id: solutionId,
+						user_id: userId,
+						benefit: benefitTxt,
+						drawback: drawbackTxt
+					},
+					addResponse,
+					"json"
+				);						
+			} else {				
+				$.post(
+					"__URL__/updateComment",
+					{
+						comment_id: commentId,
+						solution_id: solutionId,
+						user_id: userId,
+						benefit: benefitTxt,
+						drawback: drawbackTxt						
+					},
+					updateResponse,
+					"json"
+				);
+			}
+		}
+		
+		function addResponse(data) {
+			if (data.status === 0) {
+				slideBox(msg.text(data.info), 2000, 'red');
+			} else {
+				var currDiv = getCurrDiv();
+				currDiv.find('input.comment_id').val(data.info);
+				switchDiv();
+			}
+		}
+		
+		function updateResponse(data) {
+			if (data.status === 0) {
+				slideBox(msg.text(data.info), 2000, 'red');
+			} else {
+				switchDiv();
+			}
+		}
+
+		function switchDiv() {
+			var currDiv = getCurrDiv();
+			var direction = $('#direction').val();
+			var currId = parseInt(currDiv.attr('id'));
+			if (direction === "next" && currId < {$comments|count}) {
+				currDiv.hide();
+				$('#curr_id').val(currId + 1);
+				getCurrDiv().show();
+				updateBtnStatus();
+			} else if (direction === "prev" && currId > 1) {
+				currDiv.hide();
+				$('#curr_id').val(currId - 1);
+				getCurrDiv().show();
+				updateBtnStatus();
+			} else if (direction === "finish") {
+				$('div.panel_wrapper').html('<div style="margin-top:160px;text-align:center;font-size:32px;font-weight:bold;">感谢参与 头脑风暴 之 "百家争鸣"</div>');
+			}			
+		}		
 	</script>
 <include file="./Tpl/Public/headend_bodystart_banner.html" />
 <div id="wrapper">
@@ -52,6 +187,7 @@
 				<div class="hide">
 					<input id="user_id" type="text" value="{$user_id}">
 					<input id="curr_id" type="text" value="1">
+					<input id="direction" type="text">
 				</div>
 				<div class="line">
 					<strong>风暴主题：</strong>
@@ -65,33 +201,37 @@
 				</if>
 				<volist name="comments" id="co" key="k">
 					<div class="comment hide" id="{$k}">
+						<div class="hide">
+							<input type="text" class="comment_id" value="{$co['comment_id']}">
+							<input type="text" class="solution_id" value="{$co['solution_id']}">
+						</div>
 						<div class="line">
-							<strong>方案 {$k} / {$comments|count}：</strong><span style="background-color:lightgreen; padding:5px;">{$co['content']}</span>
+							<strong>方案 {$k} / {$comments|count}：</strong><span style="background-color:#BCF5BC; padding:5px;">{$co['content']}</span>
 						</div>
 						<div class="line">
 							<span>优点（1～2个）：</span>
 						</div>
 						<div class="line">
-							<textarea class="benefit" style="width:600px; height:100px;text-align:left;" class="text" tabindex="1">{$co['benefit']}</textarea>
+							<textarea class="benefit" style="width:600px;height:100px;text-align:left;background-color:#E4FBE4;" class="text" tabindex="1">{$co['benefit']}</textarea>
 						</div>
 						<div class="line">
 							<span>缺点（1～2个）：</span>
 						</div>
 						<div class="line">
-							<textarea class="drawback" style="width:600px; height:100px;text-align:left;" class="text" tabindex="2">{$co['drawback']}</textarea>
+							<textarea class="drawback" style="width:600px; height:100px;text-align:left;background-color:#FFF8F8;" class="text" tabindex="2">{$co['drawback']}</textarea>
 						</div>
 					</div>
 				</volist>
 			</div>
 			<div class="ctrl">
 				<div style="float:left;">
-					<input style="font-size:15px;" type="button" value="上一方案" tabindex="3" class="btn" />
+					<input id="prev" style="font-size:15px;" type="button" value="上一方案" tabindex="3" class="btn" />
 				</div>
 				<div style="float:right;">
-					<input style="font-size:15px;" type="button" value="下一方案" tabindex="5" class="btn" />
+					<input id="next" style="font-size:15px;" type="button" value="下一方案" tabindex="5" class="btn" />
 				</div>
 				<div style="text-align:center;">
-					<input style="font-size:15px;" type="button" value="完 成" tabindex="4" class="btn" />
+					<input id="finish" style="font-size:15px;" type="button" value="完 成" tabindex="4" class="btn" />
 				</div>
 				
 			</div>

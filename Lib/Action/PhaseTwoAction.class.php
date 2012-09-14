@@ -1,6 +1,6 @@
 <?php
 class PhaseTwoAction extends Action {
-	function attend(){
+	public function attend(){
 		if (empty($_GET['token'])) {
 			$this->error();
 		} else {
@@ -41,31 +41,33 @@ class PhaseTwoAction extends Action {
 															on
 																s.solution_id = c.solution_id
 														where
-															s.subject_id = $subjectId")){
+															s.subject_id = $subjectId
+															and
+															s.user_id <> $userId")){
 								$this->assign('user_id', $userId);
 								$this->assign('user_name', $currUser['name']);								
 								$this->assign('subject', $currSubject);
 								$this->assign('comments', $comments);
 								$this->display();								
 							} else {
-								$this->error('5');
+								$this->error();
 							}						
 						} else {
-							$this->error('4');
+							$this->error();
 						}						
 					} else {
-						$this->error('3');
+						$this->error();
 					}					
 				} else {
-					$this->error('2');
+					$this->error();
 				}
 			} else {
-				$this->error('1');
+				$this->error();
 			} 
 		}
 	}
 
-	function sendMail() {
+	public function sendMail() {
 		if ($this->isPost()) {
 			$subjectId = $_POST['subjectId'];			
 			$Model = M();
@@ -138,6 +140,37 @@ class PhaseTwoAction extends Action {
 		$body = mb_eregi_replace('{phase_two_link}', $phase_two_link, $body);
 		
 		return $body;
-	}	
+	}
+
+	public function addComment() {
+		if ($this->isPost()){
+			$Comment = D('Comment');
+			if ($Comment->create()) {
+				if ($comment_id = $Comment->add()) {
+					$this->success($comment_id);
+				} else {
+					$this->error('评论未能保存');
+				}
+			} else {
+				$this->error($Comment->getError());
+			}
+		} else {
+			$this->error();
+		}
+	}
+	
+	public function updateComment() {
+		if ($this->isPost()) {
+			$Comment = D('Comment');
+			if ($Comment->create()) {
+				$Comment->save();
+				$this->success();
+			} else {
+				$this->error($Comment->getError());
+			}
+		} else {
+			$this->error();
+		}
+	}
 }
 ?>

@@ -3,8 +3,16 @@ class UserAction extends Action {
 	public function login() {
 		if (!empty($_GET['token'])) {
 			$token = $_GET['token'];
+			if ($iPos = strpos($token, 'I')) {				
+				$token = substr($token, 0, $iPos);
+				$direct = 'phaseTwo';
+			} else {
+				$direct = 'phaseOne';
+			}
+			
 			if ($subjectId = decryptToken($token)){
 				$this->assign('token', $token);
+				$this->assign('direct', $direct);
 			} else {
 				$this->error();
 			}			
@@ -46,7 +54,7 @@ class UserAction extends Action {
 				$username = $User->name;
 				if($user_id = $User->add()) {
 					setSessionCookie($user_id, $username);
-					$this->success();
+					$this->success(encryptId($user_id));
 				} else {
 					$this->error('保存失败');
 				}				
@@ -69,7 +77,7 @@ class UserAction extends Action {
 				
 				setSessionCookie($currUser['user_id'], $currUser['name']);
 				unset($_SESSION['currUser']);
-				$this->success();
+				$this->success(encryptId($currUser['user_id']));
 			} else {
 				$this->error('邮箱或密码输入有误');
 			}		

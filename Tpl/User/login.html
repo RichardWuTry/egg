@@ -102,8 +102,10 @@
 		} else {
 			<if condition="empty($token)">
 				window.location = "__APP__";
+			<elseif condition="$direct eq 'phaseTwo'"/>
+				window.location = "__APP__/PhaseTwo/attend/token/" + data.info + "I{$token}";
 			<else />
-				window.location = "__APP__/PhaseOne/attend/token/{$token}";
+				window.location = "__APP__/PhaseOne/attend/token/{$token}"
 			</if>			
 		}
 	}
