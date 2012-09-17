@@ -1,5 +1,5 @@
 <include file="./Tpl/Public/headstart.html" />
-	<title>一家之言 详情</title>
+	<title>百家争鸣 详情</title>
 	<link rel="stylesheet" href="__PUBLIC__/css/common.css" />
 	<link rel="stylesheet" href="__PUBLIC__/css/head_panel.TopRightBtn.css" />
 	<link rel="stylesheet" href="__PUBLIC__/css/panel.css" />
@@ -17,10 +17,6 @@
 			width: 800px;
 		}
 		
-		.line {
-			margin-bottom: 10px;
-		}
-		
 		div, span, strong {
 			font-size: 15px;
 		}
@@ -28,6 +24,12 @@
 		#showAttendee {
 			cursor: pointer;
 		}
+		
+		div.comment {
+			width:362px;
+			padding: 6px;
+			margin-bottom:10px;
+		}	
 	</style>
 	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 	<script>
@@ -59,15 +61,30 @@
 		<div class="float_right" style="margin:8px 15px 0 0;">
 			<span style="color:#FFFFFF;" id="showAttendee">[显示参与者]</span>
 		</div>
-		<h1>当前有{$solutions|count}人已给出方案/看法</h1>
+		<h1>百家争鸣</h1>
 		<div class="panelbody">
 			<div class="main">
 				<volist name="solutions" id="sol" key="k">
-					<div class="line">
-						<span>方案{$k}.</span>
-						<span class="attendee hide"><strong>{$sol.name}</strong> <span>({$sol.email})：</span></span>
-						<span>{$sol.content}</span>
-					</div>
+						<div style="clear:both;">
+							<span>方案{$k}.</span>
+							<span class="attendee hide"><strong>{$sol.name}</strong> <span>({$sol.email})：</span></span>
+							<span>{$sol.content}</span>
+						</div>
+						<if condition="!empty($sol['comments'])">
+							<volist name="sol['comments']" id="comment">
+							<div style="margin:5px 0px 5px 15px;">
+								<div>
+									<span class="attendee hide"><strong>{$comment['name']}</strong> <span>({$comment['email']})：</span>
+								</div>								
+								<div class="comment" style="background-color:#BCF5BC;float:left;">									
+									<span>{$comment['benefit']}</span>
+								</div>
+								<div class="comment" style="background-color:#FFE6E6;float:right;">
+									<span>{$comment['drawback']}</span>
+								</div>
+							</div>
+							</volist>
+						</if>
 				</volist>
 			</div>
 			<div class="ctrl">

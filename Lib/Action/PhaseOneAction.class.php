@@ -91,6 +91,7 @@ class PhaseOneAction extends Action {
 													s.subject_id = $subjectId")) {
 					$this->assign('solutions', $solutions);					
 				}
+				$this->assign('user_name', $_SESSION['user_name']);
 				$this->display();
 			} else {
 				$this->error();

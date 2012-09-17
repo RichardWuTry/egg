@@ -172,5 +172,56 @@ class PhaseTwoAction extends Action {
 			$this->error();
 		}
 	}
+	
+	public function showDetail(){
+		if (empty($_GET['id'])){
+			$this->error();
+		} else {
+			$subjectId = $_GET['id'];
+			$userId = $_SESSION['user_id'];
+			$Subject = M('Subject');
+			if ($Subject->where("subject_id = $subjectId and user_id = $userId")
+						->find()){
+				$Model = M();
+				if ($solutions = $Model->query("select
+													s.solution_id,
+													u.name,
+													u.email,
+													s.content
+												from
+													solution s
+													join
+													user u
+													on
+														s.user_id = u.user_id
+												where
+													s.subject_id = $subjectId")) {					
+					for ($i = 0; $i < count($solutions); $i++) {
+						$solutionId = $solutions[$i]['solution_id'];
+						if ($comments = $Model->query("select
+														u.name,
+														u.email,
+														c.benefit,
+														c.drawback
+													from
+														comment c
+														join
+														user u
+														on
+															c.user_id = u.user_id
+													where
+														c.solution_id = $solutionId")) {
+							$solutions[$i]['comments'] = $comments;								
+						}
+					}
+					$this->assign('solutions', $solutions);					
+				}
+				$this->assign('user_name', $_SESSION['user_name']);
+				$this->display();
+			} else {
+				$this->error();
+			}
+		}
+	}	
 }
 ?>

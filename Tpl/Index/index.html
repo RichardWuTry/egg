@@ -114,69 +114,69 @@
 <div id="wrapper">
 	<div id="topSlideMsg"></div>
 	<div class="storms" style="max-width: 960px; margin: 0 auto;">
-		<volist name="storms" id="subject">
-			<div class="panel_wrapper" id="subject_{$subject.subject_id}">
+		<volist name="storms" id="storm">
+			<div class="panel_wrapper" id="subject_{$storm.subject_id}">
 				<div class="float_right" style="margin:8px 15px 0 0;">
-					<if condition="$subject.close_datetime lt date('Y-m-d H:i:s',strtotime('-1 months'))">
-						<span id="hideSubject_{$subject.subject_id}" class="hideSubject" style="color:#FFFFFF;">[隐 藏]</span>&nbsp;
+					<if condition="$storm.close_datetime lt date('Y-m-d H:i:s',strtotime('-1 months'))">
+						<span id="hideSubject_{$storm.subject_id}" class="hideSubject" style="color:#FFFFFF;">[隐 藏]</span>&nbsp;
 					</if>
-					<a href="__APP__/Subject/edit/id/{$subject.subject_id}" style="color:#FFFFFF;">[修 改]</a>					
+					<a href="__APP__/Subject/edit/id/{$storm.subject_id}" style="color:#FFFFFF;">[修 改]</a>					
 				</div>
 				<h2>
-					{$subject.name}
+					{$storm.name}
 				</h2>
 				<div class="panelbody">
 					<div>
 						<span style="background-color:#BCF5BC;padding:5px;">发送链接给参与者：</span>
-						<input type="text" class="text link" value="http://{$serverName}__APP__/User/login/token/{$subject.token}" style="width:765px;">
+						<input type="text" class="text link" value="http://{$serverName}__APP__/User/login/token/{$storm.token}" style="width:765px;">
 					</div>
-					<if condition="!empty($subject['desc'])">
+					<if condition="!empty($storm['desc'])">
 						<div style="margin-top:10px;">
 							<strong>补充说明：</strong>
-							<span>{$subject.desc}</span>
+							<span>{$storm.desc}</span>
 						</div>
 					</if>
-					<div style="margin-top:10px;height:150px;">
-						<div class="stage" style="float:left;width:40.1%">
+					<div style="margin-top:10px;height:160px;">
+						<div class="stage" style="float:left;width:40.1%;">
 							<div style="float:right;">
-								<a href="__APP__/PhaseOne/showDetail/id/{$subject.subject_id}" style="color:blue;">查看详情</a>
+								<a href="__APP__/PhaseOne/showDetail/id/{$storm.subject_id}" style="color:blue;">查看详情</a>
 							</div>
 							<div style="margin-bottom:15px;">
 								<strong>一家之言</strong>
 							</div>
 							<div style="margin-bottom:15px;">								
-								<strong>{$solutions[$subject['subject_id']]|count}人已独立给出方案：</strong>
-								<volist name="solutions[$subject['subject_id']]" id="sol">
-									<span title="{$sol['email']}" style="padding:5px;margin-right:5px;background-color:#BCF5BC;">{$sol['name']}</span>
+								<span>{$storm['phase_one_users']|count}人已独立给出方案：</span>
+								<volist name="storm['phase_one_users']" id="phase_one_user">
+									<span title="{$phase_one_user['email']}" style="padding:5px;margin-right:5px;background-color:#BCF5BC;">{$phase_one_user['name']}</span>
 								</volist>
 							</div>
 							<div>
-								<if condition="$subject.close_datetime gt date('Y-m-d H:i:s')">
-									<span style="padding:5px;background-color:#FFE6E6;">{$subject.close_datetime|strtotime|date="Y年n月j日 H时", ###} 将关闭</span>
+								<if condition="$storm.close_datetime gt date('Y-m-d H:i:s')">
+									<span style="padding:5px;background-color:#FFE6E6;">{$storm.close_datetime|strtotime|date="Y年n月j日 H时", ###} 将关闭</span>
 								<else />
 									<span style="padding:5px;background-color:#FFE6E6;">已关闭</span>
 								</if>
 							</div>
 						</div>
-						<if condition="$subject.include_judge eq 1">
-						<div class="stage" style="float:right;width:56.1%">
+						<if condition="$storm.include_judge eq 1">
+						<div class="stage" style="float:right;width:56.1%;">
 							<div style="float:right;">
-								<a href="__APP__/PhaseTwo/showDetail/id/{$subject.subject_id}" style="color:blue;">查看详情</a>
+								<a href="__APP__/PhaseTwo/showDetail/id/{$storm.subject_id}" style="color:blue;">查看详情</a>
 							</div>
 							<div style="margin-bottom:7px;">
 								<strong>百家争鸣</strong>
 							</div>
-							<if condition="empty($subject['phase_two_token'])">
+							<if condition="empty($storm['phase_two_token'])">
 								<div class="send_mail_div">
-									<if condition="(empty($solutions[$subject['subject_id']])) OR ($subject.close_datetime gt date('Y-m-d H:i:s'))">
+									<if condition="(empty($storms['phase_one_users'])) OR ($storm.close_datetime gt date('Y-m-d H:i:s'))">
 										<input type="button" value="发送匿名互评邮件" class="btn" style="font-size:15px;" disabled="disabled">
 									<else/>
-										<input id="sendMail_{$subject.subject_id}" type="button" value="发送匿名互评邮件" class="btn sendPhaseTwoMail" style="font-size:15px;">
+										<input id="sendMail_{$storm.subject_id}" type="button" value="发送匿名互评邮件" class="btn sendPhaseTwoMail" style="font-size:15px;">
 									</if>
 								</div>
 								<div class="phase_two_link hide">
 									<div style="margin-bottom:5px;">
-										<span>如下链接发送给未收到邮件者，或仅参与第二阶段者(不推荐)</span>
+										<span>如下链接发送给未收到邮件，或仅参与第二阶段者(不推荐)</span>
 									</div>
 									<div>
 										<input type="text" class="text link" style="width:510px;">
@@ -185,16 +185,24 @@
 							<else/>
 								<div class="phase_two_link">
 									<div style="margin-bottom:5px;">
-										<span>如下链接发送给未收到邮件者，或仅参与第二阶段者(不推荐)</span>
+										<span>如下链接发送给未收到邮件，或仅参与第二阶段者(不推荐)</span>
 									</div>
 									<div>
-										<input type="text" class="text link" style="width:510px;" value="http://{$serverName}__APP__/User/login/token/{$subject.phase_two_token}">
+										<input type="text" class="text link" style="width:510px;" value="http://{$serverName}__APP__/User/login/token/{$storm.phase_two_token}">
 									</div>	
 								</div>
 							</if>
-							<div>
-								<strong>完成度</strong>
-							</div>
+							<if condition="!empty($storm['phase_two_token'])">
+								<div style="margin:15px 0;">
+									<span>{$storm['phase_two_users']|count}人已完成互评：</span>
+									<volist name="storm['phase_two_users']" id="phase_two_user">
+										<span title="{$phase_two_user['email']}" style="padding:5px;margin-right:5px;background-color:#BCF5BC;">{$phase_two_user['name']}</span>
+									</volist>
+								</div>
+								<div>
+									<span style="padding:5px;background-color:#FFE6E6;">完成度{$storm['phase_two_finish_rate']}%</span>
+								</div>
+							</if>
 						</div>
 						</if>
 					</div>

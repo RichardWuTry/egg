@@ -12,29 +12,58 @@ class IndexAction extends Action {
 		$Subject = M('Subject');
 		if ($storms = $Subject->where("user_id = $userId and is_active = 1")
 							->order('create_at desc')
-							->select()) {
-			$this->assign('storms', $storms);
-			$this->assign('serverName', $_SERVER["SERVER_NAME"]);
-			
+							->select()) {			
 			$Model = M();
-			$solutions = array();
-			foreach($storms as $s) {
-				$subjectId = $s['subject_id'];
-				if ($sol = $Model->query("select
-											u.name,
-											u.email
-										from
-											solution s
-											join
-											user u
-											on
-												s.user_id = u.user_id
-										where
-											s.subject_id = $subjectId")) {
-					$solutions[$subjectId] = $sol;
+			//$solutions = array();
+			for ($i = 0; $i < count($storms); $i++) {
+				$subjectId = $storms[$i]['subject_id'];
+				
+				$solutionCnt = 0;
+				if ($phaseOneUsers = $Model->query("select
+														u.name,
+														u.email
+													from
+														solution s
+														join
+														user u
+														on
+															s.user_id = u.user_id
+													where
+														s.subject_id = $subjectId")) {
+					$storms[$i]['phase_one_users'] = $phaseOneUsers;
+					$solutionCnt = count($phaseOneUsers);
+				}				
+				
+				if ($solutionCnt > 1 && !empty($storms[$i]['phase_one_users'])) {
+					$commentCnt = 0;
+					if ($phaseTwoUsers = $Model->query("select
+															u.name,
+															u.email
+														from
+															solution s
+															join
+															comment c
+															on
+																s.solution_id = c.solution_id
+															join
+															user u
+															on
+																c.user_id = u.user_id
+														where
+															s.subject_id = $subjectId
+														group by
+															u.name,
+															u.email
+														having
+															count(1) >= $solutionCnt-1")) {
+						$storms[$i]['phase_two_users'] = $phaseTwoUsers;
+						$commentCnt = count($phaseTwoUsers);
+						$storms[$i]['phase_two_finish_rate'] = round($commentCnt/$solutionCnt*100, 2);
+					}				
 				}
 			}
-			$this->assign('solutions', $solutions);
+			$this->assign('storms', $storms);
+			$this->assign('serverName', $_SERVER["SERVER_NAME"]);
 		}
 
 		$this->assign('user_id', $userId);
