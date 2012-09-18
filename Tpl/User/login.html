@@ -16,6 +16,10 @@
 		font-size: 15px;
 		font-weight: normal;
 	}
+	
+	.waiting {
+		background:#FFFFFF url('__PUBLIC__/images/waiting.gif') no-repeat 105px 6px;
+	}
 </style>
 <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
 <script src="__PUBLIC__/javascript/jqTools.js"></script>
@@ -90,7 +94,36 @@
 				);
 			}
 		});
+		
+		$('#forgotPassword').click(function(){
+			if (validateEmail($('#email')[0], msg[0], '邮箱输入不正确', '')) {
+				$(this).prop('disabled', true).val('邮件发送中...     ').addClass('waiting').css('cursor', 'default');
+				var mail = $('#email').val();
+				$.post(
+					"__URL__/newPasswordEmail",
+					{
+						email: mail
+					},
+					newPasswordEmailResponse,
+					"json"
+				);
+			} else {
+				slideBox(msg, 2000, 'red');
+			}
+		});
 	});
+	
+	function newPasswordEmailResponse(data) {	
+		var forgotPwd = $('#forgotPassword');
+		forgotPwd.removeClass('waiting');
+		if (data.status == 0) {
+			slideBox(msg.text(data.info), 3000, 'red');
+			forgotPwd.prop('disabled', false).val('找回密码').css('cursor', 'point');
+		} else {
+			slideBox(msg.text(data.info), 2000, 'green');
+			forgotPwd.val('邮件发送成功');
+		}
+	}
 	
 	function showResponse(data) {
 		if (data.status === 0) {
@@ -110,7 +143,8 @@
 		}
 	}
 	
-	function checkEmailResponse(data) {	
+	function checkEmailResponse(data) {
+		$('#forgotPassword').hide();
 		if (data.status === 0) {
 			$('.register').show();
 			$('#login').val('注册');
@@ -156,7 +190,7 @@
 						<input id="login" style="font-size:15px;" type="button" value="注册/登录" tabindex="5" class="btn" disabled="disabled">
 					</span>
 					<span>
-						<input id="forgotPassword" style="font-size:15px;" type="button" value="找回密码" tabindex="6" class="btn hide">
+						<input id="forgotPassword" style="font-size:15px;background-color:#FFFFFF;" type="button" value="找回密码" tabindex="6" class="btn hide">
 					</span>
 				</div>
 			</div>

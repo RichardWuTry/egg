@@ -105,12 +105,12 @@ class UserAction extends Action {
 			$User = M('User');
 			if ($currUser = $User
 							->where("email = '$email'")
-							->field("user_id, user_name")
+							->field("user_id, name")
 							->find()) {
 				$token = encryptId($currUser['user_id']);				
 				
-				$subject = '[考评牛马] 重置密码';
-				$body = $this->prepareEmailBody($currUser['user_name'], $token);
+				$subject = '[头脑风暴机] 重置密码';
+				$body = $this->prepareEmailBody($currUser['name'], $token);
 				require_once COMMON_PATH.'/Mail/mail.php';
 				if (sendMail(array($email), $subject, $body)) {
 					$this->success('几分钟后，您将收到重置密码的电子邮件');
@@ -150,28 +150,28 @@ class UserAction extends Action {
 	}
 	
 	public function savePassword() {
-		if ($this->isPost() && !empty($_SESSION['id'])) {
+		if ($this->isPost()) {
 			$user_id = $_SESSION['id'];
 			$email = $_POST['email'];
 			$newPassword = sha1($_POST['password']);
 			
 			$User = M('User');
 			if ($currUser = $User->where("user_id = $user_id and email = '$email'")
-								->field("user_name, password")
+								->field("name, password")
 								->find()) {
 				if ($newPassword != $currUser['password']) {
 					$data['user_id'] = $user_id;
 					$data['password'] = $newPassword;
 					$User->save($data);
 				}
-				setSessionCookie($user_id, $currUser['user_name']);
+				setSessionCookie($user_id, $currUser['name']);
 				unset($_SESSION['id']);
 				$this->success();
 			} else {
 				$this->error('请输入原始注册邮箱');
 			}
 		} else {
-			redirect(__APP__);
+			$this->error();
 		}
 	}
 }
