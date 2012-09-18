@@ -47,9 +47,12 @@
 					);
 				} else {
 					$('.register').hide();
-					$('#login').val('登录/注册').attr("disabled", "disabled");
+					$('#login').val('输入邮箱试试').attr("disabled", "disabled");
 					slideBox(msg, 2000, 'red');
 				}
+			} else {
+				$('.register').hide();
+				$('#login').val('输入邮箱试试').attr("disabled", "disabled");
 			}
 		});
 		
@@ -191,7 +194,7 @@
 				</div>
 				<div class="ctrl">
 					<span>
-						<input id="login" style="font-size:15px;" type="button" value="注册/登录" tabindex="5" class="btn" disabled="disabled">
+						<input id="login" style="font-size:15px;" type="button" value="输入邮箱试试" tabindex="5" class="btn" disabled="disabled">
 					</span>
 					<span>
 						<input id="forgotPassword" style="font-size:15px;background-color:#FFFFFF;" type="button" value="找回密码" tabindex="6" class="btn hide">
