@@ -1,24 +1,29 @@
 <?php
 class UserAction extends Action {
 	public function login() {
-		if (!empty($_GET['token'])) {
-			$token = $_GET['token'];
-			if ($iPos = strpos($token, 'I')) {				
-				$token = substr($token, 0, $iPos);
-				$direct = 'phaseTwo';
-			} else {
-				$direct = 'phaseOne';
+		if (isObsoleteIE()) {
+			$this->error("浏览器不兼容，请选用Chrome，FireFox，Safari或IE9。<br>若您已使用IE9，请关闭兼容模式。");
+		} else {
+		
+			if (!empty($_GET['token'])) {
+				$token = $_GET['token'];
+				if ($iPos = strpos($token, 'I')) {				
+					$token = substr($token, 0, $iPos);
+					$direct = 'phaseTwo';
+				} else {
+					$direct = 'phaseOne';
+				}
+				
+				if ($subjectId = decryptToken($token)){
+					$this->assign('token', $token);
+					$this->assign('direct', $direct);
+				} else {
+					$this->error();
+				}			
 			}
-			
-			if ($subjectId = decryptToken($token)){
-				$this->assign('token', $token);
-				$this->assign('direct', $direct);
-			} else {
-				$this->error();
-			}			
+		
+			$this->display();
 		}
-	
-		$this->display();
 	}
 	
 	public function checkEmail() {
@@ -137,15 +142,19 @@ class UserAction extends Action {
 	}
 	
 	public function resetPassword() {
-		if ($token = $_GET['token']) {
-			if ($id = decryptToken($token)) {
-				$_SESSION['id'] = $id;				
-				$this->display();
+		if (isObsoleteIE()) {
+			$this->error("浏览器不兼容，请选用Chrome，FireFox，Safari或IE9。<br>若您已使用IE9，请关闭兼容模式。");
+		} else {
+			if ($token = $_GET['token']) {
+				if ($id = decryptToken($token)) {
+					$_SESSION['id'] = $id;				
+					$this->display();
+				} else {
+					redirect(__APP__);
+				}
 			} else {
 				redirect(__APP__);
 			}
-		} else {
-			redirect(__APP__);
 		}
 	}
 	

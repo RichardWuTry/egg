@@ -1,69 +1,73 @@
 <?php
 class PhaseTwoAction extends Action {
 	public function attend(){
-		if (empty($_GET['token'])) {
-			$this->error();
+		if (isObsoleteIE()) {
+			$this->error("浏览器不兼容，请选用Chrome，FireFox，Safari或IE9。<br>若您已使用IE9，请关闭兼容模式。");
 		} else {
-			$token = $_GET['token'];
-			if ($iPos = strpos($token, 'I')) {
-				$userToken = substr($token, 0, $iPos);
-				$subjectToken = substr($token, $iPos+1);
-				$userId = decryptToken($userToken);
-				$subjectId = decryptToken($subjectToken);
-				//$this->error('userId:'.$userId.'subjectId:'.$subjectId);
-				if ($userId && $subjectId) {
-					$User = M('User');
-					if ($currUser = $User->where("user_id = $userId")
-										->field("name")
-										->find()) {						
-						$Subject = M('Subject');
-						if ($currSubject = $Subject->where("subject_id = $subjectId")
-													->find()) {
-							$Model = M();
-							if ($comments = $Model->query("select
-															s.solution_id,
-															s.content,
-															c.comment_id,
-															c.benefit,
-															c.drawback
-														from
-															solution s
-															left join
-															(select
-																comment_id,
-																solution_id,
-																benefit,
-																drawback
+			if (empty($_GET['token'])) {
+				$this->error();
+			} else {
+				$token = $_GET['token'];
+				if ($iPos = strpos($token, 'I')) {
+					$userToken = substr($token, 0, $iPos);
+					$subjectToken = substr($token, $iPos+1);
+					$userId = decryptToken($userToken);
+					$subjectId = decryptToken($subjectToken);
+					//$this->error('userId:'.$userId.'subjectId:'.$subjectId);
+					if ($userId && $subjectId) {
+						$User = M('User');
+						if ($currUser = $User->where("user_id = $userId")
+											->field("name")
+											->find()) {						
+							$Subject = M('Subject');
+							if ($currSubject = $Subject->where("subject_id = $subjectId")
+														->find()) {
+								$Model = M();
+								if ($comments = $Model->query("select
+																s.solution_id,
+																s.content,
+																c.comment_id,
+																c.benefit,
+																c.drawback
 															from
-																comment
+																solution s
+																left join
+																(select
+																	comment_id,
+																	solution_id,
+																	benefit,
+																	drawback
+																from
+																	comment
+																where
+																	user_id = $userId) as c
+																on
+																	s.solution_id = c.solution_id
 															where
-																user_id = $userId) as c
-															on
-																s.solution_id = c.solution_id
-														where
-															s.subject_id = $subjectId
-															and
-															s.user_id <> $userId")){
-								$this->assign('user_id', $userId);
-								$this->assign('user_name', $currUser['name']);								
-								$this->assign('subject', $currSubject);
-								$this->assign('comments', $comments);
-								$this->display();								
+																s.subject_id = $subjectId
+																and
+																s.user_id <> $userId")){
+									$this->assign('user_id', $userId);
+									$this->assign('user_name', $currUser['name']);								
+									$this->assign('subject', $currSubject);
+									$this->assign('comments', $comments);
+									$this->display();								
+								} else {
+									$this->error();
+								}						
 							} else {
 								$this->error();
 							}						
 						} else {
 							$this->error();
-						}						
+						}					
 					} else {
 						$this->error();
-					}					
+					}
 				} else {
 					$this->error();
-				}
-			} else {
-				$this->error();
-			} 
+				} 
+			}
 		}
 	}
 
