@@ -168,7 +168,7 @@
 							</div>
 							<if condition="empty($storm['phase_two_token'])">
 								<div class="send_mail_div">
-									<if condition="(empty($storms['phase_one_users'])) OR ($storm.close_datetime gt date('Y-m-d H:i:s'))">
+									<if condition="(empty($storm['phase_one_users'])) OR ($storm.close_datetime gt date('Y-m-d H:i:s'))">
 										<input type="button" value="发送匿名互评邮件" class="btn" style="font-size:15px;" disabled="disabled">
 									<else/>
 										<input id="sendMail_{$storm.subject_id}" type="button" value="发送匿名互评邮件" class="btn sendPhaseTwoMail" style="font-size:15px;">
