@@ -58,7 +58,7 @@ class UserAction extends Action {
 				$User->password = sha1($User->password);
 				$username = $User->name;
 				if($user_id = $User->add()) {
-					setSessionCookie($user_id, $username);
+					setSessionCookie($user_id, $username, 1);
 					$this->success(encryptId($user_id));
 				} else {
 					$this->error('保存失败');
@@ -80,7 +80,7 @@ class UserAction extends Action {
 			if ($email === $currUser['email']
 				&& $shaPwd === $currUser['password']) {
 				
-				setSessionCookie($currUser['user_id'], $currUser['name']);
+				setSessionCookie($currUser['user_id'], $currUser['name'], 1);
 				unset($_SESSION['currUser']);
 				$this->success(encryptId($currUser['user_id']));
 			} else {
@@ -173,7 +173,7 @@ class UserAction extends Action {
 					$data['password'] = $newPassword;
 					$User->save($data);
 				}
-				setSessionCookie($user_id, $currUser['name']);
+				setSessionCookie($user_id, $currUser['name'], 1);
 				unset($_SESSION['id']);
 				$this->success();
 			} else {
