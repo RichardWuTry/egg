@@ -8,7 +8,7 @@ class IndexAction extends Action {
 	}
 
     public function index(){
-		$userId = $_SESSION['user_id'];
+		$userId = $_SESSION[APP_PREFIX.'user_id'];
 		$Subject = M('Subject');
 		if ($storms = $Subject->where("user_id = $userId and is_active = 1")
 							->order('create_at desc')
@@ -67,14 +67,14 @@ class IndexAction extends Action {
 		}
 
 		$this->assign('user_id', $userId);
-		$this->assign('user_name', $_SESSION['user_name']);
+		$this->assign('user_name', $_SESSION[APP_PREFIX.'user_name']);
 		$this->display();
     }
 	
 	public function inactive(){
 		if ($this->isPost()){
 			$subjectId = $_POST['subjectId'];
-			$userId = $_SESSION['user_id'];
+			$userId = $_SESSION[APP_PREFIX.'user_id'];
 			$data['is_active'] = 0;
 			$Subject = M('Subject');
 			if ($Subject->where("subject_id = $subjectId and user_id = $userId")

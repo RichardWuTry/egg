@@ -6,14 +6,14 @@ function verify()
 }
 
 function setSessionCookie($user_id, $user_name, $days) {
-	$_SESSION['user_id'] = $user_id;
-	$_SESSION['user_name'] = $user_name;
+	$_SESSION[APP_PREFIX.'user_id'] = $user_id;
+	$_SESSION[APP_PREFIX.'user_name'] = $user_name;
 	setcookie('user_id', $user_id, time() + (60 * 60 * 24 * $days), SESSION_COOKIE_PATH);
 	setcookie('user_name', $user_name, time() + (60 * 60 * 24 * $days), SESSION_COOKIE_PATH);
 }
 
 function clearSessionCookie() {
-	if (isset($_SESSION['user_id'])) {
+	if (isset($_SESSION[APP_PREFIX.'user_id'])) {
 		// 清空session
 		$_SESSION = array();
 		// 删除session cookie
@@ -29,12 +29,12 @@ function clearSessionCookie() {
 }
 
 function isLogin() {
-	if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])) {
+	if (isset($_SESSION[APP_PREFIX.'user_id']) && isset($_SESSION[APP_PREFIX.'user_name'])) {
 		return true;
 	} else {
 		if (isset($_COOKIE['user_id']) && isset($_COOKIE['user_name'])){
-			$_SESSION['user_id'] = $_COOKIE['user_id'];
-			$_SESSION['user_name'] = $_COOKIE['user_name'];
+			$_SESSION[APP_PREFIX.'user_id'] = $_COOKIE['user_id'];
+			$_SESSION[APP_PREFIX.'user_name'] = $_COOKIE['user_name'];
 			return true;
 		} else {
 			return false;

@@ -88,7 +88,7 @@ class PhaseTwoAction extends Action {
 										where
 											s.subject_id = $subjectId")) {
 				//获取风暴发布者信息
-				$hostId = $_SESSION['user_id'];
+				$hostId = $_SESSION[APP_PREFIX.'user_id'];
 				$User = M('User');
 				$host = $User->where("user_id = $hostId")
 							->field("name, email")
@@ -182,7 +182,7 @@ class PhaseTwoAction extends Action {
 			$this->error();
 		} else {
 			$subjectId = $_GET['id'];
-			$userId = $_SESSION['user_id'];
+			$userId = $_SESSION[APP_PREFIX.'user_id'];
 			$Subject = M('Subject');
 			if ($Subject->where("subject_id = $subjectId and user_id = $userId")
 						->find()){
@@ -220,7 +220,7 @@ class PhaseTwoAction extends Action {
 					}
 					$this->assign('solutions', $solutions);					
 				}
-				$this->assign('user_name', $_SESSION['user_name']);
+				$this->assign('user_name', $_SESSION[APP_PREFIX.'user_name']);
 				$this->display();
 			} else {
 				$this->error();

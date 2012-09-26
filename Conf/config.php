@@ -1,5 +1,6 @@
 <?php
 if (!defined('THINK_PATH')) exit();
+define('APP_PREFIX', 'egg_');
 define('SESSION_COOKIE_PATH', '/egg/');
 return array(
 	/* 数据库设置 */
@@ -30,7 +31,5 @@ return array(
 	'MAIL_PASSWORD'			=> 'BaoChangJi1',
 	'MAIL_REPLAY_ADDRESS'	=> 'egg@1singlestep.com',
 	'MAIL_FROM_NAME'		=> '知行思新',
-	
-	'SESSION_OPTIONS'       => array('path'=>SESSION_COOKIE_PATH),
 );
 ?>

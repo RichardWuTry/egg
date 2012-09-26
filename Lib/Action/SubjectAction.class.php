@@ -8,8 +8,8 @@ class SubjectAction extends Action {
 	}
 
     public function create(){
-		$this->assign('user_id', $_SESSION['user_id']);
-		$this->assign('user_name', $_SESSION['user_name']);
+		$this->assign('user_id', $_SESSION[APP_PREFIX.'user_id']);
+		$this->assign('user_name', $_SESSION[APP_PREFIX.'user_name']);
 		$this->display();
     }
 	
@@ -39,7 +39,7 @@ class SubjectAction extends Action {
 			$this->error();
 		} else {
 			$subjectId = $_GET['id'];
-			$userId = $_SESSION['user_id'];
+			$userId = $_SESSION[APP_PREFIX.'user_id'];
 			$Model = M('Subject');
 			if ($subject = $Model->where("subject_id = $subjectId and user_id = $userId")
 								->find()) {

@@ -16,7 +16,7 @@ class PhaseOneAction extends Action {
 				$Model = M('Subject');
 				if ($subject = $Model->where("subject_id = $subjectId")
 									->find()) {
-					$userId = $_SESSION['user_id'];
+					$userId = $_SESSION[APP_PREFIX.'user_id'];
 
 						if (date("Y-m-d H:i:s") >= $subject['close_datetime']) {
 							$this->error("头脑风暴 之 '一家之言' 阶段已结束");				
@@ -29,7 +29,7 @@ class PhaseOneAction extends Action {
 							}
 							$this->assign('subject', $subject);
 							$this->assign('user_id', $userId);
-							$this->assign('user_name', $_SESSION['user_name']);
+							$this->assign('user_name', $_SESSION[APP_PREFIX.'user_name']);
 							$this->display();	
 						}
 
@@ -72,7 +72,7 @@ class PhaseOneAction extends Action {
 			$this->error();
 		} else {
 			$subjectId = $_GET['id'];
-			$userId = $_SESSION['user_id'];
+			$userId = $_SESSION[APP_PREFIX.'user_id'];
 			$Subject = M('Subject');
 			if ($Subject->where("subject_id = $subjectId and user_id = $userId")
 						->find()){
@@ -91,7 +91,7 @@ class PhaseOneAction extends Action {
 													s.subject_id = $subjectId")) {
 					$this->assign('solutions', $solutions);					
 				}
-				$this->assign('user_name', $_SESSION['user_name']);
+				$this->assign('user_name', $_SESSION[APP_PREFIX.'user_name']);
 				$this->display();
 			} else {
 				$this->error();
