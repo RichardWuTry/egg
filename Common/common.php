@@ -96,11 +96,7 @@ function encryptId($id)
 function decryptToken($token)
 {
 	$idStr = decryptAlphabetToNum(substr($token, 10, strlen($token)-20));
-	if (encryptId($idStr) == $token) {
-		return $idStr;
-	} else {
-		return false;
-	}
+	return $idStr;
 }
 
 function isObsoleteIE() {
